@@ -1,0 +1,47 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="init-client-table" author="kent">
+        <sql>
+            CREATE TABLE client
+            (
+            id          UUID PRIMARY KEY,
+            username    VARCHAR(64) NOT NULL UNIQUE,
+            password    VARCHAR(80) NOT NULL,
+            full_name   VARCHAR(128) NOT NULL
+            );
+        </sql>
+    </changeSet>
+    <changeSet id="init-sector-table" author="kent">
+        <sql>
+            CREATE TABLE sector
+            (
+            id          SMALLINT PRIMARY KEY,
+            name        VARCHAR(128) NOT NULL,
+            parent_id   BIGINT REFERENCES sector (id)
+            );
+        </sql>
+    </changeSet>
+    <changeSet id="init-involvement-application-table" author="kent">
+        <sql>
+            CREATE TABLE involvement_application
+            (
+            id              UUID PRIMARY KEY,
+            client_id       UUID NOT NULL REFERENCES client (id),
+            terms_agree     BOOLEAN NOT NULL
+            );
+        </sql>
+    </changeSet>
+    <changeSet id="init-involvement-application-sector-table" author="kent">
+        <sql>
+            CREATE TABLE involvement_application_sector
+            (
+            id                          SERIAL PRIMARY KEY,
+            involvement_application_id  UUID NOT NULL REFERENCES involvement_application (id),
+            sector_id                   BIGINT NOT NULL REFERENCES sector (id)
+            );
+        </sql>
+    </changeSet>
+</databaseChangeLog>
